@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    ============================================================
+    📦 pom.xml — Project Object Model
+    ============================================================
+    This is Maven's configuration file. Think of it as a "shopping list"
+    that tells Maven what libraries (dependencies) our project needs.
+    Maven reads this file, downloads everything, and compiles our code.
+    ============================================================
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <!-- Maven POM version (always 4.0.0, don't change this) -->
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--
+        🏗️ PARENT: Spring Boot Starter Parent
+        ================================================
+        This is like saying "our project INHERITS from Spring Boot."
+        It pre-configures sensible defaults for:
+        - Java compiler version
+        - Dependency versions (so we don't have to specify versions for every Spring library)
+        - Plugin configurations
+        
+        Think of it as buying a "starter kit" instead of individual parts.
+    -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.3.6</version>
+        <relativePath/> <!-- Tells Maven to look in the remote repository, not locally -->
+    </parent>
+
+    <!--
+        🏷️ PROJECT IDENTITY
+        ================================================
+        groupId    = Your organization's unique ID (like a domain name in reverse)
+        artifactId = The project name (used as the JAR file name)
+        version    = Your app's version number
+        name       = Human-readable project name
+    -->
+    <groupId>com.portal</groupId>
+    <artifactId>alumni-portal</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>Alumni Portal</name>
+    <description>Alumni and Student Portal - Spring Boot Backend</description>
+
+    <!--
+        ⚙️ PROPERTIES
+        ================================================
+        Variables we can reuse throughout this file.
+        java.version = which Java version to compile with.
+    -->
+    <properties>
+        <java.version>21</java.version>
+        <!-- We target Java 21 features. Java 26 (your version) runs Java 21 code perfectly
+             because Java is backward compatible — newer versions run older code. -->
+    </properties>
+
+    <!--
+        📦 DEPENDENCIES — Our Shopping List
+        ================================================
+        Each <dependency> block adds a library to our project.
+        Maven downloads these from Maven Central (a huge public repository of Java libraries).
+        
+        The <scope> tag controls WHEN the dependency is available:
+        - compile (default): Available everywhere
+        - runtime: Only needed when running, not compiling
+        - test: Only available in test code
+        - provided: Available at compile time, but the server provides it at runtime
+    -->
+    <dependencies>
+
+        <!--
+            🌐 Spring Boot Starter Web
+            What: Gives us everything to build REST APIs (controllers, HTTP handling, JSON serialization)
+            Why:  Our frontend will call HTTP endpoints like POST /api/auth/login — this makes that possible
+            Includes: Embedded Tomcat server (so we don't need to install a separate server!)
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <!-- Note: No <version> tag needed! The parent POM already knows the right version. -->
+
+        <!--
+            🗄️ Spring Boot Starter Data JPA
+            What: Java Persistence API — lets us interact with the database using Java objects instead of raw SQL
+            Why:  Instead of writing "INSERT INTO users (name, email) VALUES (...)", we just do:
+                  userRepository.save(new User("John", "john@email.com"))
+                  JPA translates our Java objects into SQL automatically!
+            Includes: Hibernate (the actual ORM engine that does the translation)
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <!--
+            🔐 Spring Boot Starter Security
+            What: Adds authentication (who are you?) and authorization (what can you do?) to our app
+            Why:  We need to protect endpoints — only admins should access /api/admin/*, 
+                  only logged-in users should access profiles, etc.
+            Includes: Password encoding (BCrypt), security filter chain, CSRF protection
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <!--
+            ✅ Spring Boot Starter Validation
+            What: Lets us add validation rules to our data (e.g., @NotBlank, @Email, @Size)
+            Why:  When a user registers, we want to ensure the email is valid, password is strong enough,
+                  name isn't empty, etc. — BEFORE saving to the database
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!--
+            🐘 PostgreSQL JDBC Driver
+            What: The "translator" between Java and PostgreSQL database
+            Why:  Java doesn't natively speak PostgreSQL's protocol. This driver converts Java's 
+                  database calls into PostgreSQL-compatible commands.
+            Scope: runtime — we only need it when the app is RUNNING, not when compiling
+        -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!--
+            🎫 JJWT — JSON Web Token Library (3 parts)
+            What: Creates and validates JWT tokens for authentication
+            Why:  After a user logs in, we give them a "digital pass" (JWT token).
+                  They show this pass with every request so we know who they are
+                  without checking the database every time.
+            
+            It's split into 3 JARs:
+            - jjwt-api:     The interfaces (what methods are available)
+            - jjwt-impl:    The actual code (how those methods work)
+            - jjwt-jackson: JSON processing for the token payload
+        -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>0.12.6</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>0.12.6</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>0.12.6</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!--
+            🧪 Spring Boot Starter Test
+            What: Testing tools — JUnit 5, Mockito, Spring Test utilities
+            Why:  We'll write tests to make sure our code works correctly
+            Scope: test — only available in src/test/, not in the actual app
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!--
+            🧪 Spring Security Test
+            What: Extra test utilities specifically for testing security configurations
+            Why:  Makes it easy to write tests like "verify this endpoint returns 403 for non-admins"
+        -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <!--
+        🔨 BUILD PLUGINS
+        ================================================
+        Plugins are tools that run during the build process.
+        The Spring Boot Maven Plugin does two key things:
+        1. Creates an executable JAR (so we can run: java -jar alumni-portal.jar)
+        2. Provides the 'mvn spring-boot:run' command for easy development
+    -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

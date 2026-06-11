@@ -1,0 +1,31 @@
+-- ============================================================
+-- 🌱 data.sql — Database Seed Script
+-- ============================================================
+-- This file runs automatically every time the app starts
+-- (because we set spring.sql.init.mode=always in application.properties).
+--
+-- PURPOSE: Create the first admin (Class Coordinator) account.
+-- Without this, nobody could log into the admin panel to approve
+-- other users — it's a chicken-and-egg problem!
+--
+-- The password below is "Admin@123" hashed with BCrypt.
+-- BCrypt is a one-way hashing algorithm — you can't reverse it
+-- to get the original password. Spring Security uses BCrypt to
+-- securely store passwords (never store plain text passwords!).
+--
+-- DEFAULT ADMIN CREDENTIALS:
+--   Email:    admin@portal.com
+--   Password: Admin@123
+-- ============================================================
+
+-- The "WHERE NOT EXISTS" clause makes this IDEMPOTENT:
+-- It only inserts if no admin account exists yet.
+-- This way, running the script multiple times won't create duplicate admins.
+INSERT INTO users (full_name, email, password_hash, role, account_status, batch_year, department, created_at, updated_at)
+SELECT 'Class Coordinator', 'admin@portal.com',
+       '$2a$10$EqKcp1WFKqGIVo9UR/cPfuDPh1PsHfBjx1ZxhP7v8JxqgXGQiJfam',
+       'ROLE_ADMIN', 'APPROVED', 2024, 'Administration',
+       CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+WHERE NOT EXISTS (
+    SELECT 1 FROM users WHERE role = 'ROLE_ADMIN'
+);
