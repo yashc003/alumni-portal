@@ -1,5 +1,14 @@
 D:\projects\alumini portal\backend\src\main\java\com\portal\AlumniPortalApplication.java
+D:\projects\alumini portal\backend\src\main\java\com\portal\config\SecurityConfig.java
+D:\projects\alumini portal\backend\src\main\java\com\portal\controller\AuthController.java
+D:\projects\alumini portal\backend\src\main\java\com\portal\dto\AuthResponse.java
+D:\projects\alumini portal\backend\src\main\java\com\portal\dto\LoginRequest.java
+D:\projects\alumini portal\backend\src\main\java\com\portal\dto\RegisterRequest.java
 D:\projects\alumini portal\backend\src\main\java\com\portal\model\AccountStatus.java
 D:\projects\alumini portal\backend\src\main\java\com\portal\model\Role.java
 D:\projects\alumini portal\backend\src\main\java\com\portal\model\User.java
 D:\projects\alumini portal\backend\src\main\java\com\portal\repository\UserRepository.java
+D:\projects\alumini portal\backend\src\main\java\com\portal\security\CustomUserDetailsService.java
+D:\projects\alumini portal\backend\src\main\java\com\portal\security\JwtAuthenticationFilter.java
+D:\projects\alumini portal\backend\src\main\java\com\portal\security\JwtTokenProvider.java
+D:\projects\alumini portal\backend\src\main\java\com\portal\service\AuthService.java
