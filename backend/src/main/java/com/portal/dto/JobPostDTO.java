@@ -11,6 +11,8 @@ public class JobPostDTO {
     private String location;
     private String description;
     private String applyLink;
+    private String source;
+    private String externalSourceUrl;
     private String postedByFullName;
     private LocalDateTime createdAt;
 }

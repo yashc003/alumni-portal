@@ -16,6 +16,7 @@ export function JobBoardPage() {
     const { user } = useAuth();
     const [jobs, setJobs] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [filter, setFilter] = useState('All'); // 'All', 'Alumni', 'External'
     
     // Modal state for posting a job
     const [isPosting, setIsPosting] = useState(false);
@@ -69,6 +70,13 @@ export function JobBoardPage() {
 
     const canPost = user?.role === 'ROLE_ALUMNI' || user?.role === 'ROLE_ADMIN';
 
+    const filteredJobs = jobs.filter(job => {
+        if (filter === 'All') return true;
+        if (filter === 'Alumni') return job.source === 'Alumni';
+        if (filter === 'External') return job.source !== 'Alumni';
+        return true;
+    });
+
     if (loading) {
         return (
             <div className="flex-1 flex flex-col items-center justify-center bg-dark-bg text-gray-500 h-full">
@@ -95,9 +103,33 @@ export function JobBoardPage() {
                 </div>
             </div>
 
+            {/* Filter Area */}
+            <div className="bg-dark-surface border-b border-gray-800 px-8 py-4">
+                <div className="max-w-5xl mx-auto flex space-x-2">
+                    <button 
+                        onClick={() => setFilter('All')} 
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filter === 'All' ? 'bg-primary-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}
+                    >
+                        All Jobs
+                    </button>
+                    <button 
+                        onClick={() => setFilter('Alumni')} 
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filter === 'Alumni' ? 'bg-primary-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}
+                    >
+                        Alumni Posts
+                    </button>
+                    <button 
+                        onClick={() => setFilter('External')} 
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filter === 'External' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}
+                    >
+                        External Jobs
+                    </button>
+                </div>
+            </div>
+
             {/* Jobs List */}
             <div className="flex-1 p-8 max-w-5xl mx-auto w-full">
-                {jobs.length === 0 ? (
+                {filteredJobs.length === 0 ? (
                     <div className="text-center py-20 bg-dark-surface rounded-xl border border-gray-800">
                         <div className="text-4xl mb-4">📭</div>
                         <h3 className="text-xl font-medium text-white mb-2">No jobs posted yet</h3>
@@ -105,18 +137,34 @@ export function JobBoardPage() {
                     </div>
                 ) : (
                     <div className="space-y-6">
-                        {jobs.map(job => (
+                        {filteredJobs.map(job => (
                             <div key={job.id} className="bg-dark-surface border border-gray-800 rounded-xl p-6 shadow-md hover:border-primary-500/50 transition-colors">
                                 <div className="flex justify-between items-start mb-4">
                                     <div>
-                                        <h2 className="text-xl font-bold text-white mb-1">{job.title}</h2>
+                                        <div className="flex items-center space-x-3 mb-1">
+                                            <h2 className="text-xl font-bold text-white">{job.title}</h2>
+                                            
+                                            {/* Source Badge */}
+                                            {job.source === 'Alumni' ? (
+                                                <span className="bg-primary-500/20 text-primary-400 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider border border-primary-500/30">
+                                                    👤 Alumni Post
+                                                </span>
+                                            ) : (
+                                                <span className="bg-purple-500/20 text-purple-400 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider border border-purple-500/30">
+                                                    🤖 {job.source}
+                                                </span>
+                                            )}
+                                        </div>
+                                        
                                         <div className="flex items-center text-sm text-gray-400 space-x-4">
                                             <span className="flex items-center">🏢 {job.company}</span>
                                             <span className="flex items-center">📍 {job.location}</span>
                                         </div>
                                     </div>
-                                    <div className="text-right">
-                                        <div className="text-sm font-medium text-gray-300">Posted by {job.postedByFullName}</div>
+                                    <div className="text-right flex flex-col items-end">
+                                        <div className="text-sm font-medium text-gray-300">
+                                            {job.source === 'Alumni' ? `Posted by ${job.postedByFullName}` : 'Automated Import'}
+                                        </div>
                                         <div className="text-xs text-gray-500 mt-1">{new Date(job.createdAt).toLocaleDateString()}</div>
                                     </div>
                                 </div>

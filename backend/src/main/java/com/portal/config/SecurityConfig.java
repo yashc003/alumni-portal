@@ -137,6 +137,8 @@ public class SecurityConfig {
                 // 🔌 WebSocket Handshake — must be public so the browser can connect. 
                 // Security is handled LATER by WebSocketAuthInterceptor during STOMP CONNECT!
                 .requestMatchers("/ws/**").permitAll()
+                // 🐛 Allow /error endpoint so server errors return 500 instead of 403 Forbidden
+                .requestMatchers("/error").permitAll()
                 // The /** means "any sub-path", so this covers:
                 //   /api/auth/register, /api/auth/login, /api/auth/anything-else
 

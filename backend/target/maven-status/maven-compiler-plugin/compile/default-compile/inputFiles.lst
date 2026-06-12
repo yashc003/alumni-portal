@@ -1,5 +1,4 @@
 D:\projects\alumini portal\backend\src\main\java\com\portal\AlumniPortalApplication.java
-D:\projects\alumini portal\backend\src\main\java\com\portal\config\DatabaseCleanupConfig.java
 D:\projects\alumini portal\backend\src\main\java\com\portal\config\SecurityConfig.java
 D:\projects\alumini portal\backend\src\main\java\com\portal\config\WebSocketAuthInterceptor.java
 D:\projects\alumini portal\backend\src\main\java\com\portal\config\WebSocketConfig.java
@@ -8,6 +7,7 @@ D:\projects\alumini portal\backend\src\main\java\com\portal\controller\AuthContr
 D:\projects\alumini portal\backend\src\main\java\com\portal\controller\ChatController.java
 D:\projects\alumini portal\backend\src\main\java\com\portal\controller\DirectoryController.java
 D:\projects\alumini portal\backend\src\main\java\com\portal\controller\JobController.java
+D:\projects\alumini portal\backend\src\main\java\com\portal\controller\NotificationController.java
 D:\projects\alumini portal\backend\src\main\java\com\portal\controller\UserController.java
 D:\projects\alumini portal\backend\src\main\java\com\portal\dto\AuthResponse.java
 D:\projects\alumini portal\backend\src\main\java\com\portal\dto\JobPostDTO.java
@@ -23,14 +23,21 @@ D:\projects\alumini portal\backend\src\main\java\com\portal\model\Channel.java
 D:\projects\alumini portal\backend\src\main\java\com\portal\model\ChatMessage.java
 D:\projects\alumini portal\backend\src\main\java\com\portal\model\JobPost.java
 D:\projects\alumini portal\backend\src\main\java\com\portal\model\Role.java
+D:\projects\alumini portal\backend\src\main\java\com\portal\model\SystemNotification.java
 D:\projects\alumini portal\backend\src\main\java\com\portal\model\User.java
 D:\projects\alumini portal\backend\src\main\java\com\portal\repository\ChannelRepository.java
 D:\projects\alumini portal\backend\src\main\java\com\portal\repository\ChatMessageRepository.java
 D:\projects\alumini portal\backend\src\main\java\com\portal\repository\JobPostRepository.java
+D:\projects\alumini portal\backend\src\main\java\com\portal\repository\NotificationRepository.java
 D:\projects\alumini portal\backend\src\main\java\com\portal\repository\UserRepository.java
 D:\projects\alumini portal\backend\src\main\java\com\portal\security\CustomUserDetailsService.java
 D:\projects\alumini portal\backend\src\main\java\com\portal\security\JwtAuthenticationFilter.java
 D:\projects\alumini portal\backend\src\main\java\com\portal\security\JwtTokenProvider.java
 D:\projects\alumini portal\backend\src\main\java\com\portal\service\AdminService.java
 D:\projects\alumini portal\backend\src\main\java\com\portal\service\AuthService.java
+D:\projects\alumini portal\backend\src\main\java\com\portal\service\scraper\impl\GreenhouseScraper.java
+D:\projects\alumini portal\backend\src\main\java\com\portal\service\scraper\impl\LeverScraper.java
+D:\projects\alumini portal\backend\src\main\java\com\portal\service\scraper\impl\LinkedInScraper.java
+D:\projects\alumini portal\backend\src\main\java\com\portal\service\scraper\JobScraperStrategy.java
+D:\projects\alumini portal\backend\src\main\java\com\portal\service\scraper\ScraperEngine.java
 D:\projects\alumini portal\backend\src\main\java\com\portal\TestHash.java

@@ -22,15 +22,41 @@ export function AdminPage() {
     // State to hold the array of pending users
     const [pendingUsers, setPendingUsers] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [actionLoading, setActionLoading] = useState(null); // Tracks which user ID is being approved/rejected
     const [error, setError] = useState('');
+    
+    // Notifications State
+    const [notifications, setNotifications] = useState([]);
+    const [showNotifications, setShowNotifications] = useState(false);
 
-    /*
-     * 1. 🔄 Fetch pending users when the page first loads
-     */
     useEffect(() => {
         fetchPendingUsers();
+        fetchNotifications();
+        
+        // Poll for notifications every 30 seconds
+        const interval = setInterval(fetchNotifications, 30000);
+        return () => clearInterval(interval);
     }, []);
 
+    const fetchNotifications = async () => {
+        try {
+            const res = await api.get('/api/admin/notifications/unread');
+            setNotifications(res.data);
+        } catch (error) {
+            console.error("Failed to fetch notifications", error);
+        }
+    };
+
+    const markAsRead = async (id) => {
+        try {
+            await api.put(`/api/admin/notifications/${id}/read`);
+            setNotifications(notifications.filter(n => n.id !== id));
+        } catch (error) {
+            console.error("Failed to mark notification as read", error);
+        }
+    };
+
+    // 🚀 Fetches the list of pending users from the backend
     const fetchPendingUsers = async () => {
         try {
             setLoading(true);
@@ -75,6 +101,54 @@ export function AdminPage() {
                     <h1 className="text-xl font-bold text-white tracking-tight">Admin Portal</h1>
                 </div>
                 <div className="flex items-center gap-6">
+                    {/* Notifications Bell */}
+                    <div className="relative">
+                        <button 
+                            onClick={() => setShowNotifications(!showNotifications)}
+                            className="relative p-2 text-slate-400 hover:text-white transition-colors rounded-full hover:bg-dark-bg"
+                        >
+                            🔔
+                            {notifications.length > 0 && (
+                                <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse"></span>
+                            )}
+                        </button>
+
+                        {/* Notifications Dropdown */}
+                        {showNotifications && (
+                            <div className="absolute right-0 mt-2 w-80 bg-dark-card border border-dark-border rounded-xl shadow-2xl z-50 overflow-hidden">
+                                <div className="p-4 border-b border-dark-border bg-dark-surface flex justify-between items-center">
+                                    <h3 className="text-sm font-bold text-white">System Alerts</h3>
+                                    <span className="text-xs text-primary-400 font-medium">{notifications.length} unread</span>
+                                </div>
+                                <div className="max-h-64 overflow-y-auto custom-scrollbar">
+                                    {notifications.length === 0 ? (
+                                        <div className="p-6 text-center text-slate-500 text-sm">
+                                            All systems operational.
+                                        </div>
+                                    ) : (
+                                        notifications.map(notif => (
+                                            <div key={notif.id} className="p-4 border-b border-dark-border/50 hover:bg-dark-bg/50 transition-colors">
+                                                <div className="flex justify-between items-start mb-1">
+                                                    <span className="text-xs font-bold text-red-400">{notif.source}</span>
+                                                    <span className="text-[10px] text-slate-500">
+                                                        {new Date(notif.createdAt).toLocaleTimeString()}
+                                                    </span>
+                                                </div>
+                                                <p className="text-sm text-slate-300 mb-3">{notif.message}</p>
+                                                <button 
+                                                    onClick={() => markAsRead(notif.id)}
+                                                    className="text-xs text-primary-400 hover:text-primary-300 transition-colors font-medium"
+                                                >
+                                                    Dismiss
+                                                </button>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
                     <Link to="/" className="text-sm text-primary-400 hover:text-primary-300 font-medium transition-colors border border-primary-500/30 bg-primary-500/10 px-3 py-1.5 rounded-lg">
                         Go to Chat
                     </Link>

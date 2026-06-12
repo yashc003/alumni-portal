@@ -30,8 +30,14 @@ public class JobPost {
     @Column(name = "apply_link")
     private String applyLink;
 
+    @Column
+    private String source = "Alumni"; // e.g., Alumni, Greenhouse, Lever, LinkedIn
+
+    @Column(name = "external_source_url")
+    private String externalSourceUrl; // Link to the original posting
+
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "posted_by", nullable = false)
+    @JoinColumn(name = "posted_by", nullable = true)
     private User postedBy;
 
     @CreationTimestamp

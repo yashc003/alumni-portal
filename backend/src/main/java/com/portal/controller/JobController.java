@@ -75,7 +75,15 @@ public class JobController {
         dto.setLocation(job.getLocation());
         dto.setDescription(job.getDescription());
         dto.setApplyLink(job.getApplyLink());
-        dto.setPostedByFullName(job.getPostedBy().getFullName());
+        dto.setSource(job.getSource());
+        dto.setExternalSourceUrl(job.getExternalSourceUrl());
+        
+        if (job.getPostedBy() != null) {
+            dto.setPostedByFullName(job.getPostedBy().getFullName());
+        } else {
+            dto.setPostedByFullName("System");
+        }
+        
         dto.setCreatedAt(job.getCreatedAt());
         return dto;
     }
