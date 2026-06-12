@@ -91,6 +91,16 @@ export function AuthProvider({ children }) {
         setIsAuthenticated(false);
     };
 
+    /*
+     * 🔄 UPDATE USER
+     * Updates the React state and localStorage when the user edits their profile.
+     */
+    const updateUser = (newUserData) => {
+        const updatedUser = { ...user, ...newUserData };
+        setUser(updatedUser);
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+    };
+
     // The data we want to make available to the rest of the app
     const value = {
         user,
@@ -98,7 +108,8 @@ export function AuthProvider({ children }) {
         loading,
         login,
         register,
-        logout
+        logout,
+        updateUser
     };
 
     return (

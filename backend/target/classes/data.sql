@@ -39,11 +39,3 @@ WHERE NOT EXISTS (
 INSERT INTO channels (name, description, created_at)
 SELECT 'general', 'General discussion for everyone', CURRENT_TIMESTAMP
 WHERE NOT EXISTS (SELECT 1 FROM channels WHERE name = 'general');
-
-INSERT INTO channels (name, description, created_at)
-SELECT 'jobs', 'Job referrals and career advice', CURRENT_TIMESTAMP
-WHERE NOT EXISTS (SELECT 1 FROM channels WHERE name = 'jobs');
-
-INSERT INTO channels (name, description, created_at)
-SELECT 'batch-2024', 'Specific chat for the 2024 graduating batch', CURRENT_TIMESTAMP
-WHERE NOT EXISTS (SELECT 1 FROM channels WHERE name = 'batch-2024');

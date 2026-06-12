@@ -49,30 +49,11 @@ public class ChatController {
     // 🌐 STANDARD REST APIs
     // --------------------------------------------------------
     
-    // Get the list of all available channels (e.g., #general, #jobs)
+    // Get the list of all available channels (e.g., #general)
     @GetMapping("/api/channels")
     public List<Channel> getAllChannels(Principal principal) {
-        User user = userRepository.findByEmail(principal.getName())
-            .orElseThrow(() -> new RuntimeException("User not found"));
-
-        // Auto-create batch channel if the student/alumni has a batch number
-        if (user.getBatchNumber() != null && user.getRole() != com.portal.model.Role.ROLE_ADMIN) {
-            String batchChannelName = "batch-" + user.getBatchNumber();
-            if (channelRepository.findByName(batchChannelName).isEmpty()) {
-                Channel batchChannel = new Channel();
-                batchChannel.setName(batchChannelName);
-                batchChannel.setDescription("Private chat for Batch " + user.getBatchNumber());
-                batchChannel.setTargetBatchNumber(user.getBatchNumber());
-                channelRepository.save(batchChannel);
-            }
-        }
-
-        // Filter: Public channels (null) OR matches user's batch OR user is admin
-        return channelRepository.findAll().stream()
-            .filter(c -> c.getTargetBatchNumber() == null || 
-                         (user.getBatchNumber() != null && user.getBatchNumber().equals(c.getTargetBatchNumber())) ||
-                         user.getRole() == com.portal.model.Role.ROLE_ADMIN)
-            .collect(java.util.stream.Collectors.toList());
+        // Return all channels (batch channels and jobs are deprecated)
+        return channelRepository.findAll();
     }
 
     // Load the chat history when a user clicks on a channel

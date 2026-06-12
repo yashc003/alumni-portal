@@ -105,4 +105,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
      *        → Returns a List of all users waiting for approval
      */
     List<User> findByAccountStatus(AccountStatus accountStatus);
+
+    /*
+     * Find all users by role and status (e.g. APPROVED ALUMNI).
+     */
+    List<User> findByRoleAndAccountStatus(com.portal.model.Role role, AccountStatus accountStatus);
 }
