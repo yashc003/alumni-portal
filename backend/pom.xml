@@ -187,6 +187,26 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!--
+            🔌 Spring Boot Starter WebSocket
+            What: Enables real-time, two-way communication between server and client.
+            Why:  Used for our Discord-style chatrooms so messages appear instantly.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
+
+        <!--
+            🔥 Lombok
+            What: Auto-generates getters, setters, constructors, and more!
+            Why:  Saves us from writing hundreds of lines of boilerplate code.
+        -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
 
     </dependencies>
 

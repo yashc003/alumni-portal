@@ -134,6 +134,9 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // 🟢 PUBLIC endpoints — anyone can access these without logging in
                 .requestMatchers("/api/auth/**").permitAll()
+                // 🔌 WebSocket Handshake — must be public so the browser can connect. 
+                // Security is handled LATER by WebSocketAuthInterceptor during STOMP CONNECT!
+                .requestMatchers("/ws/**").permitAll()
                 // The /** means "any sub-path", so this covers:
                 //   /api/auth/register, /api/auth/login, /api/auth/anything-else
 

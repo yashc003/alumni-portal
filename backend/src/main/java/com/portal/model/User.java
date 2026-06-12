@@ -117,6 +117,7 @@ public class User {
      * making brute-force attacks impractical.
      */
     @NotBlank(message = "Password is required")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     @Column(name = "password_hash", nullable = false, length = 255)
     private String passwordHash;
 
@@ -144,12 +145,8 @@ public class User {
      * These are NULLABLE (no @NotBlank) — they're optional during registration
      * and can be filled in later on the profile page.
      */
-    @Column(name = "batch_year")
-    private Integer batchYear;
-
-    @Size(max = 100)
-    @Column(length = 100)
-    private String department;
+    @Column(name = "batch_number")
+    private Integer batchNumber;
 
     /*
      * Alumni-specific fields.
@@ -291,20 +288,12 @@ public class User {
         this.accountStatus = accountStatus;
     }
 
-    public Integer getBatchYear() {
-        return batchYear;
+    public Integer getBatchNumber() {
+        return batchNumber;
     }
 
-    public void setBatchYear(Integer batchYear) {
-        this.batchYear = batchYear;
-    }
-
-    public String getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(String department) {
-        this.department = department;
+    public void setBatchNumber(Integer batchNumber) {
+        this.batchNumber = batchNumber;
     }
 
     public String getCompany() {

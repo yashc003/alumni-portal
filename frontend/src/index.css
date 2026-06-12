@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+/* 
+ * ============================================================
+ * 🎨 index.css — Global Styles & Tailwind Configuration
+ * ============================================================
+ * In Tailwind CSS v4, everything is configured right here in the CSS file.
+ * We don't need a separate tailwind.config.js anymore!
+ * 
+ * @theme block: This is where we define our custom design tokens
+ * (colors, fonts, spacing, etc.). We're setting up a sleek, premium
+ * dark mode aesthetic as requested in the project requirements.
+ * ============================================================
+ */
+
+@theme {
+  /* Custom Typography */
+  --font-sans: "Inter", system-ui, sans-serif;
+
+  /* Custom Color Palette (Deep Navy / Indigo / Accents) */
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-900: #1e3a8a;
+
+  --color-dark-bg: #0f172a;       /* Slate 900 - Main background */
+  --color-dark-surface: #1e293b;  /* Slate 800 - Cards/Panels */
+  --color-dark-border: #334155;   /* Slate 700 - Borders */
+}
+
+/* 
+ * Base styles that apply globally to HTML elements.
+ * @apply lets us use Tailwind utility classes inside regular CSS.
+ */
+@layer base {
+  body {
+    /* We'll default to a sleek dark mode */
+    @apply bg-dark-bg text-slate-200 antialiased font-sans selection:bg-primary-500/30;
+  }
+}

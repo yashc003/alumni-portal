@@ -21,8 +21,8 @@ package com.portal.dto;
  *   "fullName": "John Doe",
  *   "email": "john@email.com",
  *   "role": "ROLE_STUDENT",
- *   "batchYear": 2024,
- *   "department": "Computer Science",
+ *   "role": "ROLE_STUDENT",
+ *   "batchNumber": 5,
  *   "company": null,
  *   "linkedinUrl": null,
  *   "createdAt": "2026-06-11T14:30:00"
@@ -38,8 +38,7 @@ public class PendingUserResponse {
     private String fullName;
     private String email;
     private String role;
-    private Integer batchYear;
-    private String department;
+    private Integer batchNumber;
     private String company;         // Only for alumni
     private String linkedinUrl;     // Only for alumni
     private LocalDateTime createdAt; // When they registered — helps admin prioritize
@@ -53,14 +52,13 @@ public class PendingUserResponse {
      * This is a common pattern called "mapping" or "projection."
      */
     public PendingUserResponse(Long id, String fullName, String email, String role,
-                                Integer batchYear, String department, String company,
+                                Integer batchNumber, String company,
                                 String linkedinUrl, LocalDateTime createdAt) {
         this.id = id;
         this.fullName = fullName;
         this.email = email;
         this.role = role;
-        this.batchYear = batchYear;
-        this.department = department;
+        this.batchNumber = batchNumber;
         this.company = company;
         this.linkedinUrl = linkedinUrl;
         this.createdAt = createdAt;
@@ -72,8 +70,7 @@ public class PendingUserResponse {
     public String getFullName() { return fullName; }
     public String getEmail() { return email; }
     public String getRole() { return role; }
-    public Integer getBatchYear() { return batchYear; }
-    public String getDepartment() { return department; }
+    public Integer getBatchNumber() { return batchNumber; }
     public String getCompany() { return company; }
     public String getLinkedinUrl() { return linkedinUrl; }
     public LocalDateTime getCreatedAt() { return createdAt; }

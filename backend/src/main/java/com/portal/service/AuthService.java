@@ -125,8 +125,7 @@ public class AuthService {
         // Remember: the constructor sets accountStatus = PENDING automatically!
 
         // Set optional fields
-        user.setBatchYear(request.getBatchYear());
-        user.setDepartment(request.getDepartment());
+        user.setBatchNumber(request.getBatchNumber());
         user.setCompany(request.getCompany());
         user.setLinkedinUrl(request.getLinkedinUrl());
 

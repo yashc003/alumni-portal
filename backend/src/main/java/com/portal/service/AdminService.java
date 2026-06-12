@@ -72,8 +72,7 @@ public class AdminService {
                         user.getFullName(),
                         user.getEmail(),
                         user.getRole().name(),       // Enum → String: ROLE_STUDENT → "ROLE_STUDENT"
-                        user.getBatchYear(),
-                        user.getDepartment(),
+                        user.getBatchNumber(),
                         user.getCompany(),
                         user.getLinkedinUrl(),
                         user.getCreatedAt()

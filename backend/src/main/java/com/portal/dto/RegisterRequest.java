@@ -28,8 +28,7 @@ package com.portal.dto;
  *   "email": "john@email.com",
  *   "password": "MyPass@123",
  *   "role": "ROLE_STUDENT",
- *   "batchYear": 2024,
- *   "department": "Computer Science",
+ *   "batchNumber": 5,
  *   "company": null,           ← Only for alumni
  *   "linkedinUrl": null        ← Only for alumni
  * }
@@ -68,9 +67,7 @@ public class RegisterRequest {
     @NotNull(message = "Role is required")
     private String role;  // "ROLE_STUDENT" or "ROLE_ALUMNI" — we parse this to the Role enum
 
-    private Integer batchYear;      // Optional
-
-    private String department;      // Optional
+    private Integer batchNumber;      // Optional
 
     private String company;         // Only required for alumni
 
@@ -91,11 +88,8 @@ public class RegisterRequest {
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
 
-    public Integer getBatchYear() { return batchYear; }
-    public void setBatchYear(Integer batchYear) { this.batchYear = batchYear; }
-
-    public String getDepartment() { return department; }
-    public void setDepartment(String department) { this.department = department; }
+    public Integer getBatchNumber() { return batchNumber; }
+    public void setBatchNumber(Integer batchNumber) { this.batchNumber = batchNumber; }
 
     public String getCompany() { return company; }
     public void setCompany(String company) { this.company = company; }

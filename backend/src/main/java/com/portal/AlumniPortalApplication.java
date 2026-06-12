@@ -28,6 +28,10 @@ package com.portal;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.boot.CommandLineRunner;
+import com.portal.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication
 public class AlumniPortalApplication {
@@ -36,7 +40,8 @@ public class AlumniPortalApplication {
      * main() — The starting point of any Java application.
      *
      * SpringApplication.run() does ALL the heavy lifting:
-     * 1. Creates the Spring application context (the "container" for all our objects)
+     * 1. Creates the Spring application context (the "container" for all our
+     * objects)
      * 2. Scans for components (@Controller, @Service, @Repository classes)
      * 3. Connects to the database
      * 4. Starts the embedded Tomcat web server (default port: 8080)
