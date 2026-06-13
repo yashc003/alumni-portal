@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import api from '../../api/axios';
 import { useAuth } from '../../context/AuthContext';
 import { EditProfileModal } from '../profile/EditProfileModal';
-import { Shield, Globe, Briefcase, Hash, LogOut } from 'lucide-react';
+import { Shield, Globe, Briefcase, Hash, LogOut, MessageSquare } from 'lucide-react';
 
 export function ChannelList({ activeChannelId, onChannelSelect, activeTab, onTabSelect }) {
     const [channels, setChannels] = useState([]);
@@ -54,7 +54,7 @@ export function ChannelList({ activeChannelId, onChannelSelect, activeTab, onTab
                         }`}
                     >
                         <Globe size={18} className="mr-2 opacity-80" />
-                        <span>Alumni Directory</span>
+                        <span>Network Directory</span>
                     </button>
                     <button
                         onClick={() => onTabSelect('jobs')}
@@ -69,12 +69,12 @@ export function ChannelList({ activeChannelId, onChannelSelect, activeTab, onTab
                     </button>
                 </div>
 
-                {/* Channels List */}
+                {/* Public Channels List */}
                 <div className="p-3 space-y-1 mt-2 border-t border-gray-200 pt-4">
                     <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3 px-2">
                         Text Channels
                     </h3>
-                    {channels.map(channel => (
+                    {channels.filter(c => !c.isDirectMessage).map(channel => (
                         <button
                             key={channel.id}
                             onClick={() => onChannelSelect(channel.id)}
@@ -84,10 +84,47 @@ export function ChannelList({ activeChannelId, onChannelSelect, activeTab, onTab
                                     : 'text-gray-600 hover:bg-gray-200 hover:text-gray-900'
                             }`}
                         >
-                            <Hash size={18} className={`mr-2 ${activeChannelId === channel.id && activeTab === 'chat' ? 'text-primary-600' : 'text-gray-400 group-hover:text-gray-600'}`} />
+                            <Hash size={18} className={`mr-2 flex-shrink-0 ${activeChannelId === channel.id && activeTab === 'chat' ? 'text-primary-600' : 'text-gray-400 group-hover:text-gray-600'}`} />
                             <span className="truncate">{channel.name}</span>
                         </button>
                     ))}
+                </div>
+
+                {/* Direct Messages List */}
+                <div className="p-3 space-y-1 border-t border-gray-200 pt-4 pb-4">
+                    <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3 px-2">
+                        Direct Messages
+                    </h3>
+                    {channels.filter(c => c.isDirectMessage).length === 0 ? (
+                        <div className="px-3 text-xs text-gray-400 italic">No direct messages yet</div>
+                    ) : (
+                        channels.filter(c => c.isDirectMessage).map(channel => {
+                            // Find the other user
+                            const otherUser = channel.user1?.email === user?.email ? channel.user2 : channel.user1;
+                            if (!otherUser) return null;
+
+                            return (
+                                <button
+                                    key={channel.id}
+                                    onClick={() => onChannelSelect(channel.id)}
+                                    className={`w-full text-left px-3 py-2 rounded-md transition-all duration-200 flex items-center group ${
+                                        activeChannelId === channel.id && activeTab === 'chat'
+                                            ? 'bg-primary-100 text-primary-700 font-medium' 
+                                            : 'text-gray-600 hover:bg-gray-200 hover:text-gray-900'
+                                    }`}
+                                >
+                                    <div className="w-5 h-5 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0 text-primary-700 text-[10px] font-bold mr-2.5 overflow-hidden">
+                                        {otherUser.profileImage ? (
+                                            <img src={otherUser.profileImage} alt={otherUser.fullName} className="w-full h-full object-cover" />
+                                        ) : (
+                                            otherUser.fullName.charAt(0).toUpperCase()
+                                        )}
+                                    </div>
+                                    <span className="truncate">{otherUser.fullName}</span>
+                                </button>
+                            );
+                        })
+                    )}
                 </div>
             </div>
 

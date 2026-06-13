@@ -23,7 +23,7 @@ export function RegisterPage() {
 
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    
+
     const { register } = useAuth();
     const navigate = useNavigate();
 
@@ -76,19 +76,19 @@ export function RegisterPage() {
                     )}
 
                     <form onSubmit={handleSubmit} className="space-y-5">
-                        
+
                         {/* Role Selection */}
                         <div className="flex gap-4 p-1 bg-gray-100 rounded-lg mb-6 border border-gray-200">
                             <button
                                 type="button"
-                                onClick={() => setFormData({...formData, role: 'ROLE_STUDENT'})}
+                                onClick={() => setFormData({ ...formData, role: 'ROLE_STUDENT' })}
                                 className={`flex-1 py-2 rounded-md text-sm font-medium transition-all ${!isAlumni ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200/50'}`}
                             >
                                 Student
                             </button>
                             <button
                                 type="button"
-                                onClick={() => setFormData({...formData, role: 'ROLE_ALUMNI'})}
+                                onClick={() => setFormData({ ...formData, role: 'ROLE_ALUMNI' })}
                                 className={`flex-1 py-2 rounded-md text-sm font-medium transition-all ${isAlumni ? 'bg-primary-600 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200/50'}`}
                             >
                                 Alumni
@@ -141,7 +141,7 @@ export function RegisterPage() {
                                 onChange={handleChange}
                                 className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-colors shadow-sm"
                             >
-                                {Array.from({ length: 100 }, (_, i) => i + 1).map(num => (
+                                {Array.from({ length: 15 }, (_, i) => i + 1).map(num => (
                                     <option key={num} value={num}>Batch {num}</option>
                                 ))}
                             </select>
@@ -175,8 +175,8 @@ export function RegisterPage() {
                             </div>
                         )}
 
-                        <Button 
-                            type="submit" 
+                        <Button
+                            type="submit"
                             className="w-full mt-4"
                             disabled={isLoading}
                         >

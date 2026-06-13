@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api/axios';
-import { Search, Briefcase, SearchX } from 'lucide-react';
+import { Search, Briefcase, SearchX, MessageSquare } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 /*
  * ============================================================
@@ -8,13 +9,14 @@ import { Search, Briefcase, SearchX } from 'lucide-react';
  * ============================================================
  */
 
-export function DirectoryPage() {
+export function DirectoryPage({ onInitiateDM }) {
     const [alumni, setAlumni] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
+    const { user } = useAuth();
 
     useEffect(() => {
-        api.get('/api/directory/alumni')
+        api.get('/api/directory/users')
             .then(res => {
                 setAlumni(res.data);
                 setLoading(false);
@@ -37,7 +39,7 @@ export function DirectoryPage() {
         return (
             <div className="flex-1 flex flex-col items-center justify-center bg-gray-50 text-gray-500 h-full">
                 <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary-500 mb-4"></div>
-                <p>Loading Alumni Network...</p>
+                <p>Loading Network Directory...</p>
             </div>
         );
     }
@@ -47,8 +49,8 @@ export function DirectoryPage() {
             {/* Header Area */}
             <div className="bg-white border-b border-gray-200 p-8 shadow-sm">
                 <div className="max-w-6xl mx-auto">
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">Alumni Network</h1>
-                    <p className="text-gray-500 mb-6">Connect with graduates, find mentors, and explore career paths.</p>
+                    <h1 className="text-3xl font-bold text-gray-900 mb-2">Network Directory</h1>
+                    <p className="text-gray-500 mb-6">Connect with fellow students, alumni, and administrators.</p>
                     
                     {/* Search Bar */}
                     <div className="relative max-w-xl">
@@ -73,7 +75,7 @@ export function DirectoryPage() {
                         <div className="text-gray-300 mb-4">
                             <SearchX size={48} />
                         </div>
-                        <h3 className="text-xl font-medium text-gray-900 mb-2">No alumni found</h3>
+                        <h3 className="text-xl font-medium text-gray-900 mb-2">No users found</h3>
                         <p className="text-gray-500">Try adjusting your search criteria.</p>
                     </div>
                 ) : (
@@ -83,8 +85,12 @@ export function DirectoryPage() {
                                 {/* Card Header (Banner) */}
                                 <div className="h-20 bg-gradient-to-r from-primary-100 to-indigo-100 relative">
                                     <div className="absolute -bottom-8 left-6">
-                                        <div className="w-16 h-16 rounded-xl bg-primary-600 flex items-center justify-center text-2xl font-bold text-white shadow-md border-4 border-white transform group-hover:scale-105 transition-transform">
-                                            {person.fullName.charAt(0).toUpperCase()}
+                                        <div className="w-16 h-16 rounded-xl bg-primary-600 flex items-center justify-center text-2xl font-bold text-white shadow-md border-4 border-white transform group-hover:scale-105 transition-transform overflow-hidden">
+                                            {person.profileImage ? (
+                                                <img src={person.profileImage} alt={person.fullName} className="w-full h-full object-cover" />
+                                            ) : (
+                                                person.fullName.charAt(0).toUpperCase()
+                                            )}
                                         </div>
                                     </div>
                                     {/* Batch Badge */}
@@ -106,8 +112,24 @@ export function DirectoryPage() {
                                         </span>
                                     </div>
                                     
-                                    <div className="mt-auto pt-4 border-t border-gray-100">
-                                        {person.linkedinUrl ? (
+                                    <div className="mt-auto pt-4 border-t border-gray-100 flex flex-col gap-2">
+                                        {person.email !== user?.email && onInitiateDM && (
+                                            <button
+                                                onClick={async () => {
+                                                    try {
+                                                        const res = await api.post(`/api/channels/dm/${person.id}`);
+                                                        onInitiateDM(res.data.id);
+                                                    } catch (err) {
+                                                        console.error("Failed to initiate DM", err);
+                                                    }
+                                                }}
+                                                className="w-full flex items-center justify-center py-2 bg-primary-50 text-primary-700 hover:bg-primary-100 rounded-lg text-sm font-medium transition-colors border border-primary-200"
+                                            >
+                                                <MessageSquare size={16} className="mr-2" />
+                                                Message
+                                            </button>
+                                        )}
+                                        {person.linkedinUrl && (
                                             <a 
                                                 href={person.linkedinUrl} 
                                                 target="_blank" 
@@ -116,10 +138,6 @@ export function DirectoryPage() {
                                             >
                                                 Connect on LinkedIn
                                             </a>
-                                        ) : (
-                                            <div className="w-full text-center py-2 bg-gray-100 text-gray-400 rounded-lg text-sm font-medium cursor-not-allowed">
-                                                No LinkedIn Profile
-                                            </div>
                                         )}
                                     </div>
                                 </div>

@@ -32,12 +32,12 @@ public class DirectoryController {
         this.userRepository = userRepository;
     }
 
-    // Get all approved alumni
-    @GetMapping("/alumni")
-    public List<UserProfileDTO> getAlumniDirectory() {
-        List<User> alumni = userRepository.findByRoleAndAccountStatus(Role.ROLE_ALUMNI, AccountStatus.APPROVED);
+    // Get all approved users
+    @GetMapping("/users")
+    public List<UserProfileDTO> getNetworkDirectory() {
+        List<User> users = userRepository.findByAccountStatus(AccountStatus.APPROVED);
         
-        return alumni.stream().map(this::mapToDTO).collect(Collectors.toList());
+        return users.stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
     private UserProfileDTO mapToDTO(User user) {
@@ -49,6 +49,7 @@ public class DirectoryController {
         dto.setBatchNumber(user.getBatchNumber());
         dto.setCompany(user.getCompany());
         dto.setLinkedinUrl(user.getLinkedinUrl());
+        dto.setProfileImage(user.getProfileImage());
         return dto;
     }
 }

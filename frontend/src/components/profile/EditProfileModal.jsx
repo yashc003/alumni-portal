@@ -93,7 +93,7 @@ export function EditProfileModal({ isOpen, onClose }) {
 
                 const uploadRes = await api.post('/api/users/me/avatar', fileData, {
                     headers: {
-                        'Content-Type': 'multipart/form-data'
+                        'Content-Type': undefined
                     }
                 });
                 updatedImageUrl = uploadRes.data.profileImage;

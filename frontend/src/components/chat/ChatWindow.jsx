@@ -1,11 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useChat } from '../../hooks/useChat';
 import { MessageSquare, Send } from 'lucide-react';
+import { UserProfileModal } from '../profile/UserProfileModal';
+import { useAuth } from '../../context/AuthContext';
 
-export function ChatWindow({ channelId }) {
+export function ChatWindow({ channelId, onInitiateDM }) {
     const { messages, isConnected, sendMessage } = useChat(channelId);
     const [newMessage, setNewMessage] = useState('');
     const messagesEndRef = useRef(null);
+    const [selectedUser, setSelectedUser] = useState(null);
+    const { user: currentUser } = useAuth();
 
     // Auto-scroll when new messages arrive
     useEffect(() => {
@@ -94,13 +98,16 @@ export function ChatWindow({ channelId }) {
                                 <div className={`flex ${isSameUserAsPrevious ? 'mt-1' : 'mt-6'}`}>
                                     {/* Avatar */}
                                     {!isSameUserAsPrevious ? (
-                                        <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0 text-primary-700 font-bold mr-3 shadow-sm border border-primary-200 overflow-hidden">
+                                        <button 
+                                            onClick={() => setSelectedUser(msg.sender)}
+                                            className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0 text-primary-700 font-bold mr-3 shadow-sm border border-primary-200 overflow-hidden hover:ring-2 hover:ring-primary-500 hover:ring-offset-1 transition-all cursor-pointer"
+                                        >
                                             {msg.sender.profileImage ? (
                                                 <img src={msg.sender.profileImage} alt={msg.sender.fullName} className="w-full h-full object-cover" />
                                             ) : (
                                                 msg.sender.fullName.charAt(0).toUpperCase()
                                             )}
-                                        </div>
+                                        </button>
                                     ) : (
                                         <div className="w-10 mr-3 flex-shrink-0"></div> // Placeholder for alignment
                                     )}
@@ -109,7 +116,12 @@ export function ChatWindow({ channelId }) {
                                     <div>
                                         {!isSameUserAsPrevious && (
                                             <div className="flex items-baseline space-x-2 mb-1">
-                                                <span className="font-semibold text-gray-900">{msg.sender.fullName}</span>
+                                                <button 
+                                                    onClick={() => setSelectedUser(msg.sender)}
+                                                    className="font-semibold text-gray-900 hover:text-primary-600 hover:underline cursor-pointer"
+                                                >
+                                                    {msg.sender.fullName}
+                                                </button>
                                                 <span className="text-xs text-gray-500">{formatTime(msg.timestamp)}</span>
                                             </div>
                                         )}
@@ -149,6 +161,25 @@ export function ChatWindow({ channelId }) {
                     </button>
                 </form>
             </div>
+
+            <UserProfileModal 
+                isOpen={!!selectedUser} 
+                onClose={() => setSelectedUser(null)} 
+                user={selectedUser} 
+                onMessage={async (userId) => {
+                    if (selectedUser?.email === currentUser?.email) return;
+                    if (onInitiateDM) {
+                        try {
+                            import('../../api/axios').then(async ({ default: api }) => {
+                                const res = await api.post(`/api/channels/dm/${userId}`);
+                                onInitiateDM(res.data.id);
+                            });
+                        } catch (err) {
+                            console.error("Failed to initiate DM", err);
+                        }
+                    }
+                }} 
+            />
         </div>
     );
 }

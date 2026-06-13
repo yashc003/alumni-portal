@@ -12,4 +12,5 @@ public class UserProfileDTO {
     private Integer batchNumber;
     private String company;
     private String linkedinUrl;
+    private String profileImage;
 }

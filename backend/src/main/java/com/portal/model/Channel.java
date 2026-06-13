@@ -30,6 +30,17 @@ public class Channel {
     @Column(name = "target_batch_number")
     private Integer targetBatchNumber;
 
+    @Column(name = "is_direct_message")
+    private Boolean isDirectMessage = false;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user1_id")
+    private User user1;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user2_id")
+    private User user2;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 

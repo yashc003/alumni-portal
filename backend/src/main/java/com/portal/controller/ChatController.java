@@ -13,11 +13,13 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /*
  * ============================================================
@@ -56,6 +58,18 @@ public class ChatController {
         User user = userRepository.findByEmail(principal.getName())
             .orElseThrow(() -> new RuntimeException("User not found"));
             
+        // 🛠️ AUTO-CREATE BATCH CHANNEL IF IT DOESN'T EXIST
+        if (user.getBatchNumber() != null) {
+            boolean batchChannelExists = channelRepository.findByTargetBatchNumber(user.getBatchNumber()).isPresent();
+            if (!batchChannelExists) {
+                Channel newBatchChannel = new Channel();
+                newBatchChannel.setName("batch-" + user.getBatchNumber());
+                newBatchChannel.setDescription("Exclusive chat room for Batch " + user.getBatchNumber() + " students and alumni.");
+                newBatchChannel.setTargetBatchNumber(user.getBatchNumber());
+                channelRepository.save(newBatchChannel);
+            }
+        }
+        
         List<Channel> allChannels = channelRepository.findAll();
         
         if (user.getRole() == com.portal.model.Role.ROLE_ADMIN) {
@@ -63,9 +77,48 @@ public class ChatController {
         }
         
         return allChannels.stream()
-            .filter(ch -> ch.getTargetBatchNumber() == null || 
-                          ch.getTargetBatchNumber().equals(user.getBatchNumber()))
+            .filter(ch -> {
+                // If it's a DM, user must be participant
+                if (Boolean.TRUE.equals(ch.getIsDirectMessage())) {
+                    return (ch.getUser1() != null && ch.getUser1().getId().equals(user.getId())) ||
+                           (ch.getUser2() != null && ch.getUser2().getId().equals(user.getId()));
+                }
+                
+                // If it's a batch channel, user must match batch
+                if (ch.getTargetBatchNumber() != null) {
+                    return ch.getTargetBatchNumber().equals(user.getBatchNumber());
+                }
+                
+                // Otherwise it's public (like #general)
+                return true;
+            })
             .toList();
+    }
+    
+    // Create or get a Direct Message channel
+    @PostMapping("/api/channels/dm/{targetUserId}")
+    public Channel getOrCreateDirectMessage(@PathVariable Long targetUserId, Principal principal) {
+        User me = userRepository.findByEmail(principal.getName())
+            .orElseThrow(() -> new RuntimeException("User not found"));
+            
+        User target = userRepository.findById(targetUserId)
+            .orElseThrow(() -> new RuntimeException("Target user not found"));
+            
+        if (me.getId().equals(target.getId())) {
+            throw new RuntimeException("Cannot DM yourself");
+        }
+        
+        // Check if DM channel already exists
+        return channelRepository.findDirectMessageChannel(me.getId(), target.getId())
+            .orElseGet(() -> {
+                // Create a new DM channel
+                Channel dmChannel = new Channel();
+                dmChannel.setName("dm_" + UUID.randomUUID().toString().substring(0, 8)); // Unique internal name
+                dmChannel.setIsDirectMessage(true);
+                dmChannel.setUser1(me);
+                dmChannel.setUser2(target);
+                return channelRepository.save(dmChannel);
+            });
     }
 
     // Load the chat history when a user clicks on a channel
@@ -77,8 +130,14 @@ public class ChatController {
         User user = userRepository.findByEmail(principal.getName())
             .orElseThrow(() -> new RuntimeException("User not found"));
             
-        // SECURITY CHECK: Does this user belong to this batch channel?
-        if (channel.getTargetBatchNumber() != null) {
+        // SECURITY CHECK: Authorization for viewing messages
+        if (Boolean.TRUE.equals(channel.getIsDirectMessage())) {
+            boolean isParticipant = (channel.getUser1() != null && channel.getUser1().getId().equals(user.getId())) ||
+                                    (channel.getUser2() != null && channel.getUser2().getId().equals(user.getId()));
+            if (!isParticipant) {
+                throw new RuntimeException("Not authorized to view messages in this DM channel!");
+            }
+        } else if (channel.getTargetBatchNumber() != null) {
             if (user.getRole() != com.portal.model.Role.ROLE_ADMIN &&
                 !channel.getTargetBatchNumber().equals(user.getBatchNumber())) {
                 throw new RuntimeException("Not authorized to view messages in this batch channel!");
@@ -111,8 +170,14 @@ public class ChatController {
         User sender = userRepository.findByEmail(principal.getName())
             .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // 1.5 SECURITY CHECK: Does this user belong to this batch channel?
-        if (channel.getTargetBatchNumber() != null) {
+        // 1.5 SECURITY CHECK: Authorization for sending messages
+        if (Boolean.TRUE.equals(channel.getIsDirectMessage())) {
+            boolean isParticipant = (channel.getUser1() != null && channel.getUser1().getId().equals(sender.getId())) ||
+                                    (channel.getUser2() != null && channel.getUser2().getId().equals(sender.getId()));
+            if (!isParticipant) {
+                throw new RuntimeException("Not authorized to send messages to this DM channel!");
+            }
+        } else if (channel.getTargetBatchNumber() != null) {
             if (sender.getRole() != com.portal.model.Role.ROLE_ADMIN &&
                 !channel.getTargetBatchNumber().equals(sender.getBatchNumber())) {
                 throw new RuntimeException("Not authorized to send messages to this batch channel!");

@@ -141,6 +141,8 @@ public class SecurityConfig {
                 .requestMatchers("/error").permitAll()
                 // 🛠️ Temporary debug endpoint
                 .requestMatchers("/api/debug/**").permitAll()
+                // 🖼️ Allow public access to uploaded files (like profile avatars)
+                .requestMatchers("/uploads/**").permitAll()
                 // The /** means "any sub-path", so this covers:
                 //   /api/auth/register, /api/auth/login, /api/auth/anything-else
 

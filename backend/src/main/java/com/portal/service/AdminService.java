@@ -159,6 +159,7 @@ public class AdminService {
                         user.getBatchNumber(),
                         user.getCompany(),
                         user.getLinkedinUrl(),
+                        user.getProfileImage(),
                         user.getCreatedAt()
                 ))
                 .collect(Collectors.toList());

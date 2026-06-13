@@ -31,11 +31,20 @@ export function DashboardPage() {
             {/* Main Content Area */}
             <div className="flex-1 flex flex-col bg-white relative shadow-[-4px_0_15px_rgba(0,0,0,0.03)] z-0">
                 {activeTab === 'directory' ? (
-                    <DirectoryPage />
+                    <DirectoryPage onInitiateDM={(channelId) => {
+                        setActiveChannelId(channelId);
+                        setActiveTab('chat');
+                    }} />
                 ) : activeTab === 'jobs' ? (
                     <JobBoardPage />
                 ) : activeChannelId ? (
-                    <ChatWindow channelId={activeChannelId} />
+                    <ChatWindow 
+                        channelId={activeChannelId} 
+                        onInitiateDM={(channelId) => {
+                            setActiveChannelId(channelId);
+                            setActiveTab('chat');
+                        }}
+                    />
                 ) : (
                     <div className="flex-1 flex flex-col items-center justify-center text-gray-500 bg-white">
                         <div className="text-primary-500 mb-4 bg-primary-50 p-4 rounded-full">
