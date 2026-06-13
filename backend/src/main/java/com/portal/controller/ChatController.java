@@ -6,6 +6,7 @@ import com.portal.model.User;
 import com.portal.repository.ChannelRepository;
 import com.portal.repository.ChatMessageRepository;
 import com.portal.repository.UserRepository;
+import org.springframework.lang.NonNull;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -52,13 +53,38 @@ public class ChatController {
     // Get the list of all available channels (e.g., #general)
     @GetMapping("/api/channels")
     public List<Channel> getAllChannels(Principal principal) {
-        // Return all channels (batch channels and jobs are deprecated)
-        return channelRepository.findAll();
+        User user = userRepository.findByEmail(principal.getName())
+            .orElseThrow(() -> new RuntimeException("User not found"));
+            
+        List<Channel> allChannels = channelRepository.findAll();
+        
+        if (user.getRole() == com.portal.model.Role.ROLE_ADMIN) {
+            return allChannels;
+        }
+        
+        return allChannels.stream()
+            .filter(ch -> ch.getTargetBatchNumber() == null || 
+                          ch.getTargetBatchNumber().equals(user.getBatchNumber()))
+            .toList();
     }
 
     // Load the chat history when a user clicks on a channel
     @GetMapping("/api/channels/{channelId}/messages")
-    public List<ChatMessage> getChatHistory(@PathVariable Long channelId) {
+    public List<ChatMessage> getChatHistory(@PathVariable Long channelId, Principal principal) {
+        Channel channel = channelRepository.findById(channelId)
+            .orElseThrow(() -> new RuntimeException("Channel not found"));
+            
+        User user = userRepository.findByEmail(principal.getName())
+            .orElseThrow(() -> new RuntimeException("User not found"));
+            
+        // SECURITY CHECK: Does this user belong to this batch channel?
+        if (channel.getTargetBatchNumber() != null) {
+            if (user.getRole() != com.portal.model.Role.ROLE_ADMIN &&
+                !channel.getTargetBatchNumber().equals(user.getBatchNumber())) {
+                throw new RuntimeException("Not authorized to view messages in this batch channel!");
+            }
+        }
+        
         return messageRepository.findByChannelIdOrderByTimestampAsc(channelId);
     }
 
@@ -74,7 +100,7 @@ public class ChatController {
      * Principal contains the currently logged-in user's details (from our JWT interceptor!).
      */
     @MessageMapping("/chat/{channelId}/sendMessage")
-    public void sendMessage(@DestinationVariable Long channelId, 
+    public void sendMessage(@DestinationVariable @NonNull Long channelId, 
                             @Payload Map<String, String> payload, 
                             Principal principal) {
         

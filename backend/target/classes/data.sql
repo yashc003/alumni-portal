@@ -39,3 +39,20 @@ WHERE NOT EXISTS (
 INSERT INTO channels (name, description, created_at)
 SELECT 'general', 'General discussion for everyone', CURRENT_TIMESTAMP
 WHERE NOT EXISTS (SELECT 1 FROM channels WHERE name = 'general');
+
+-- ============================================================
+-- 🛠️ Schema Fix: Drop NOT NULL on posted_by
+-- ============================================================
+-- In Phase 3, posted_by was required. Now that we have automated
+-- scrapers, posted_by must be nullable. Hibernate won't drop existing
+-- NOT NULL constraints, so we do it manually here. (Idempotent in Postgres)
+ALTER TABLE job_posts ALTER COLUMN posted_by DROP NOT NULL;
+
+-- Add Job Aggregation Engine fields without wiping data
+ALTER TABLE job_posts ADD COLUMN IF NOT EXISTS relevance_score INTEGER DEFAULT 0;
+ALTER TABLE job_posts ADD COLUMN IF NOT EXISTS job_hash VARCHAR(64);
+ALTER TABLE job_posts ADD COLUMN IF NOT EXISTS is_referral_available BOOLEAN DEFAULT FALSE;
+ALTER TABLE job_posts ADD COLUMN IF NOT EXISTS min_experience INTEGER;
+ALTER TABLE job_posts ADD COLUMN IF NOT EXISTS max_experience INTEGER;
+ALTER TABLE job_posts ADD COLUMN IF NOT EXISTS matched_skills TEXT;
+ALTER TABLE job_posts ADD COLUMN IF NOT EXISTS missing_skills TEXT;

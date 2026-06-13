@@ -26,13 +26,20 @@ public class GreenhouseScraper implements JobScraperStrategy {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<JobPost> scrapeJobs() throws Exception {
         List<JobPost> jobs = new ArrayList<>();
         
         String url = "https://boards-api.greenhouse.io/v1/boards/" + BOARD_TOKEN + "/jobs";
         
         try {
-            Map response = restTemplate.getForObject(url, Map.class);
+            org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+            headers.set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
+            org.springframework.http.HttpEntity<String> entity = new org.springframework.http.HttpEntity<>(headers);
+            
+            org.springframework.http.ResponseEntity<Map> responseEntity = restTemplate.exchange(
+                url, org.springframework.http.HttpMethod.GET, entity, Map.class);
+            Map<String, Object> response = responseEntity.getBody();
             if (response != null && response.containsKey("jobs")) {
                 List<Map<String, Object>> jobList = (List<Map<String, Object>>) response.get("jobs");
                 

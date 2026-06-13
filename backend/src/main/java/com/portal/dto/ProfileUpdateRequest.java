@@ -7,4 +7,6 @@ public class ProfileUpdateRequest {
     private String fullName;
     private String company;
     private String linkedinUrl;
+    private String profileImage;
+    private String bio;
 }

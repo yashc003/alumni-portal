@@ -30,6 +30,7 @@ package com.portal.controller;
  */
 
 import com.portal.dto.PendingUserResponse;
+import com.portal.dto.UserResponse;
 import com.portal.dto.UserStatusUpdateRequest;
 import com.portal.service.AdminService;
 import jakarta.validation.Valid;
@@ -109,6 +110,23 @@ public class AdminController {
             String message = adminService.updateUserStatus(id, request.getStatus());
             return ResponseEntity.ok(Map.of("message", message));
 
+        } catch (RuntimeException ex) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(Map.of("error", ex.getMessage()));
+        }
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
+        return ResponseEntity.ok(adminService.getAllUsers());
+    }
+
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+        try {
+            adminService.anonymizeUser(id);
+            return ResponseEntity.ok(Map.of("message", "User has been deleted."));
         } catch (RuntimeException ex) {
             return ResponseEntity
                     .badRequest()

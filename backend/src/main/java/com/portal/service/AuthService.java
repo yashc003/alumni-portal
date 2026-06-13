@@ -194,7 +194,8 @@ public class AuthService {
                     token,
                     user.getFullName(),
                     user.getEmail(),
-                    user.getRole().name()  // Convert enum to string: ROLE_STUDENT → "ROLE_STUDENT"
+                    user.getRole().name(),  // Convert enum to string: ROLE_STUDENT → "ROLE_STUDENT"
+                    user.getProfileImage()
             );
 
         } catch (DisabledException ex) {

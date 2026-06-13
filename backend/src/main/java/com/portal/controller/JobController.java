@@ -38,7 +38,7 @@ public class JobController {
     // Get all jobs
     @GetMapping
     public List<JobPostDTO> getAllJobs() {
-        return jobPostRepository.findAllByOrderByCreatedAtDesc()
+        return jobPostRepository.findAllByOrderByRelevanceScoreDescCreatedAtDesc()
                 .stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
@@ -61,6 +61,7 @@ public class JobController {
         job.setDescription(request.getDescription());
         job.setApplyLink(request.getApplyLink());
         job.setPostedBy(user);
+        job.setRelevanceScore(100); // Manual Alumni posts get highest relevance
 
         jobPostRepository.save(job);
         
@@ -77,6 +78,14 @@ public class JobController {
         dto.setApplyLink(job.getApplyLink());
         dto.setSource(job.getSource());
         dto.setExternalSourceUrl(job.getExternalSourceUrl());
+        
+        // Job Aggregation Engine Fields
+        dto.setRelevanceScore(job.getRelevanceScore());
+        dto.setIsReferralAvailable(job.getIsReferralAvailable());
+        dto.setMinExperience(job.getMinExperience());
+        dto.setMaxExperience(job.getMaxExperience());
+        dto.setMatchedSkills(job.getMatchedSkills());
+        dto.setMissingSkills(job.getMissingSkills());
         
         if (job.getPostedBy() != null) {
             dto.setPostedByFullName(job.getPostedBy().getFullName());

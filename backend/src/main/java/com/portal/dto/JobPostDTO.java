@@ -15,4 +15,12 @@ public class JobPostDTO {
     private String externalSourceUrl;
     private String postedByFullName;
     private LocalDateTime createdAt;
+
+    // Job Aggregation Engine Fields
+    private Integer relevanceScore;
+    private Boolean isReferralAvailable;
+    private Integer minExperience;
+    private Integer maxExperience;
+    private String matchedSkills;
+    private String missingSkills;
 }

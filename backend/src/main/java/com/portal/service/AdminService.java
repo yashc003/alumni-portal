@@ -21,10 +21,13 @@ import com.portal.model.AccountStatus;
 import com.portal.model.User;
 import com.portal.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.UUID;
+import com.portal.dto.UserResponse;
 
 @Service
 public class AdminService {
@@ -99,7 +102,7 @@ public class AdminService {
      *   3. Prevent changing status of admin accounts
      *   4. Update the status and save
      */
-    public String updateUserStatus(Long userId, String status) {
+    public String updateUserStatus(@NonNull Long userId, String status) {
 
         // Step 1: Find the user by ID
         User user = userRepository.findById(userId)
@@ -143,5 +146,41 @@ public class AdminService {
 
         return "User " + user.getFullName() + " has been " + newStatus.name().toLowerCase();
         // "User John Doe has been approved"
+    }
+
+    public List<UserResponse> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(user -> new UserResponse(
+                        user.getId(),
+                        user.getFullName(),
+                        user.getEmail(),
+                        user.getRole().name(),
+                        user.getAccountStatus().name(),
+                        user.getBatchNumber(),
+                        user.getCompany(),
+                        user.getLinkedinUrl(),
+                        user.getCreatedAt()
+                ))
+                .collect(Collectors.toList());
+    }
+
+    public void anonymizeUser(@NonNull Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+
+        if (user.getRole().name().equals("ROLE_ADMIN")) {
+            throw new RuntimeException("Cannot delete admin account");
+        }
+
+        user.setFullName("Deleted User");
+        user.setEmail("deleted_" + UUID.randomUUID() + "@deleted.com");
+        user.setPasswordHash("DELETED");
+        user.setAccountStatus(AccountStatus.REJECTED);
+        user.setCompany(null);
+        user.setLinkedinUrl(null);
+        user.setBio(null);
+        user.setProfileImage(null);
+
+        userRepository.save(user);
     }
 }

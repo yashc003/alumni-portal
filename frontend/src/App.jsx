@@ -24,7 +24,7 @@ function ProtectedRoute({ children }) {
   
   if (loading) {
     // Show a simple loading state while checking localStorage
-    return <div className="min-h-screen flex items-center justify-center bg-dark-bg text-white">Loading...</div>;
+    return <div className="min-h-screen flex items-center justify-center bg-gray-50 text-gray-900">Loading...</div>;
   }
   
   if (!isAuthenticated) {

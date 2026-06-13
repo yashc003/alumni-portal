@@ -8,6 +8,10 @@ import java.util.List;
 
 @Repository
 public interface JobPostRepository extends JpaRepository<JobPost, Long> {
+    List<JobPost> findAllByOrderByRelevanceScoreDescCreatedAtDesc();
     List<JobPost> findAllByOrderByCreatedAtDesc();
     boolean existsByExternalSourceUrl(String externalSourceUrl);
+
+    // Job Aggregation Engine Deduplication
+    boolean existsByJobHash(String jobHash);
 }

@@ -55,12 +55,12 @@ export function AuthProvider({ children }) {
         const response = await api.post('/api/auth/login', { email, password });
         
         // Remember our backend returns AuthResponse DTO!
-        const { token, fullName, role } = response.data;
+        const { token, fullName, role, profileImage } = response.data;
         
         // Save to browser storage (survives page refreshes)
         localStorage.setItem('token', token);
         
-        const userData = { email, fullName, role };
+        const userData = { email, fullName, role, profileImage };
         localStorage.setItem('user', JSON.stringify(userData));
 
         // Update React state

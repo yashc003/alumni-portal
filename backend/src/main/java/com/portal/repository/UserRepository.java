@@ -110,4 +110,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * Find all users by role and status (e.g. APPROVED ALUMNI).
      */
     List<User> findByRoleAndAccountStatus(com.portal.model.Role role, AccountStatus accountStatus);
+
+    /*
+     * Count users by company (case insensitive) to check for alumni referrals.
+     * Ignore students and pending users.
+     */
+    int countByCompanyIgnoreCaseAndRoleAndAccountStatus(String company, com.portal.model.Role role, AccountStatus accountStatus);
 }

@@ -4,7 +4,6 @@ import com.portal.model.JobPost;
 import com.portal.service.scraper.JobScraperStrategy;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service

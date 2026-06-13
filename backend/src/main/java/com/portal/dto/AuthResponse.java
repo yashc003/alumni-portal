@@ -29,17 +29,19 @@ public class AuthResponse {
     private String fullName;
     private String email;
     private String role;
+    private String profileImage;
 
     /*
      * Constructor — we use this to create the response object in one line:
      *   new AuthResponse(token, fullName, email, role)
      * instead of calling 4 separate setter methods.
      */
-    public AuthResponse(String token, String fullName, String email, String role) {
+    public AuthResponse(String token, String fullName, String email, String role, String profileImage) {
         this.token = token;
         this.fullName = fullName;
         this.email = email;
         this.role = role;
+        this.profileImage = profileImage;
     }
 
     // --- Getters ---
@@ -52,4 +54,5 @@ public class AuthResponse {
     public String getFullName() { return fullName; }
     public String getEmail() { return email; }
     public String getRole() { return role; }
+    public String getProfileImage() { return profileImage; }
 }

@@ -6,6 +6,7 @@ import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.lang.NonNull;
 
 /*
  * ============================================================
@@ -28,7 +29,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     }
 
     @Override
-    public void configureMessageBroker(MessageBrokerRegistry config) {
+    public void configureMessageBroker(@NonNull MessageBrokerRegistry config) {
         // Broadcasts messages to any client subscribed to endpoints starting with "/topic"
         // (e.g., "/topic/channel/1" for channel 1's chatroom)
         config.enableSimpleBroker("/topic");
@@ -39,7 +40,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     }
 
     @Override
-    public void registerStompEndpoints(StompEndpointRegistry registry) {
+    public void registerStompEndpoints(@NonNull StompEndpointRegistry registry) {
         // The URL the React frontend uses to establish the initial connection
         registry.addEndpoint("/ws")
                 .setAllowedOriginPatterns("*") // Allows React to connect across ports
@@ -47,7 +48,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     }
 
     @Override
-    public void configureClientInboundChannel(ChannelRegistration registration) {
+    public void configureClientInboundChannel(@NonNull ChannelRegistration registration) {
         // Add our security interceptor to verify JWT tokens
         registration.interceptors(authInterceptor);
     }
